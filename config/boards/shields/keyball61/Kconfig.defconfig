@@ -1,7 +1,7 @@
 if SHIELD_KEYBALL61_RIGHT
 
 config ZMK_KEYBOARD_NAME
-    default "Keyball61 Cirque40"
+    default "Keyball61 C40"
 
 config ZMK_SPLIT_ROLE_CENTRAL
     default y
