@@ -1,0 +1,25 @@
+if SHIELD_KEYBALL61_RIGHT
+
+config ZMK_KEYBOARD_NAME
+    default "Keyball61 Cirque40"
+
+config ZMK_SPLIT_ROLE_CENTRAL
+    default y
+
+config I2C
+    default y
+
+config INPUT
+    default y
+
+config ZMK_POINTING
+    default y
+
+endif
+
+if SHIELD_KEYBALL61_LEFT || SHIELD_KEYBALL61_RIGHT
+
+config ZMK_SPLIT
+    default y
+
+endif

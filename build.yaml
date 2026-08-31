@@ -1,0 +1,21 @@
+---
+include:
+  - board: nice_nano//zmk
+    shield: keyball61_left
+    artifact-name: keyball61_left
+
+  # Plain central build is useful as a fallback while bringing up the hardware.
+  - board: nice_nano//zmk
+    shield: keyball61_right
+    artifact-name: keyball61_right
+
+  # Preferred central build with ZMK Studio over USB.
+  - board: nice_nano//zmk
+    shield: keyball61_right
+    snippet: studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_STUDIO_LOCKING=n
+    artifact-name: keyball61_right_studio
+
+  - board: nice_nano//zmk
+    shield: settings_reset
+    artifact-name: settings_reset
