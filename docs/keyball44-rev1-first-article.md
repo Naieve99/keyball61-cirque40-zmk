@@ -59,6 +59,10 @@ for native gestures, potentially a driver extension. On the PMW build the
 `NATIVE` selector is retained for a consistent keymap but cannot add Cirque-only
 features.
 
+Tap the second left thumb key for Left Alt. Hold it to enter the `MOUSE` layer,
+where H, J and K are left, middle and right click. This is required for the
+PMW3360 target and is also available alongside Cirque tap-click.
+
 ## First power-up sequence
 
 1. Do the unpowered continuity and isolation checks in
