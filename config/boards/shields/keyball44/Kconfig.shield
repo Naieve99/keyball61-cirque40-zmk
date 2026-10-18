@@ -1,8 +1,17 @@
 config SHIELD_KEYBALL44_LEFT
     def_bool $(shields_list_contains,keyball44_left)
 
+config SHIELD_KEYBALL44_LEFT_STANDALONE
+    def_bool $(shields_list_contains,keyball44_left_standalone)
+
 config SHIELD_KEYBALL44_RIGHT_CIRQUE
     def_bool $(shields_list_contains,keyball44_right_cirque)
 
+config SHIELD_KEYBALL44_RIGHT_CIRQUE_STANDALONE
+    def_bool $(shields_list_contains,keyball44_right_cirque_standalone)
+
 config SHIELD_KEYBALL44_RIGHT_PMW3360
     def_bool $(shields_list_contains,keyball44_right_pmw3360)
+
+config SHIELD_KEYBALL44_RIGHT_PMW3360_STANDALONE
+    def_bool $(shields_list_contains,keyball44_right_pmw3360_standalone)

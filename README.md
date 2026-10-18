@@ -15,6 +15,11 @@ Universal runtime detection is deliberately gated on hardware identification or
 isolation. The shared P0.10 pin is a Cirque sensor output but a PMW3360 MCU
 output, so a failed-I2C-then-SPI probe sequence is not electrically safe.
 
+Keyball44 also has standalone left and right targets. Those pair to the host as
+`KB44 Left` and `KB44 Right`, operate without split transport, and retain
+right-side access to pointer modes and mouse buttons. See the first-article plan
+for the exact flash combinations and the independent-layer limitation.
+
 ## Repository layout
 
 This repository is intentionally arranged as a normal ZMK user-config repo:
@@ -111,9 +116,12 @@ GitHub Actions retains the four Keyball61/support artifacts:
 It also builds these Keyball44 artifacts:
 
 - `keyball44_left`
+- `keyball44_left_standalone`
 - `keyball44_right_cirque`
 - `keyball44_right_cirque_studio`
+- `keyball44_right_cirque_standalone`
 - `keyball44_right_pmw3360_experimental`
+- `keyball44_right_pmw3360_standalone_experimental`
 
 The configuration is pinned to ZMK commit
 `6e2ef41e022d555b10f116e395832913f71717b3` (2026-08-11), a Zephyr 4.1-era

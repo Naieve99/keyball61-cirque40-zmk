@@ -31,9 +31,12 @@ against the Rev1 schematic. Its row/column pins are:
 | Artifact | Role | Status |
 | --- | --- | --- |
 | `keyball44_left` | Left BLE peripheral | First article |
+| `keyball44_left_standalone` | Independent left keyboard | Host-facing standalone build |
 | `keyball44_right_cirque` | Right central, Cirque I2C | First article |
 | `keyball44_right_cirque_studio` | Right central, Cirque + Studio | Preferred Cirque development build |
+| `keyball44_right_cirque_standalone` | Independent right keyboard, Cirque I2C | Host-facing standalone build |
 | `keyball44_right_pmw3360_experimental` | Right central, stock PMW3360 SPI | Experimental; hardware untested |
+| `keyball44_right_pmw3360_standalone_experimental` | Independent right keyboard, stock PMW3360 SPI | Experimental; hardware untested |
 
 The PMW3360 build pins George Norton's external ZMK driver at commit
 `0dfa2f0411b795613a35f222f993e45a1e4cc32a`. The stock connector does not
@@ -63,6 +66,33 @@ Tap the second left thumb key for Left Alt. Hold it to enter the `MOUSE` layer,
 where H, J and K are left, middle and right click. This is required for the
 PMW3360 target and is also available alongside Cirque tap-click.
 
+The right half has matching standalone controls: tap its Enter thumb normally
+or hold it for the `MOUSE` layer; tap its Delete thumb normally or hold it for
+`NAV`. With right `NAV` held, N/M/Comma/Dot select Original/Expanded/Native or
+toggle Scroll. The top right row provides Bluetooth profiles 0-4 and clear.
+
+## Independent-half operation
+
+For two completely independent Bluetooth keyboards, flash:
+
+- `keyball44_left_standalone` to the left controller; and
+- either `keyball44_right_cirque_standalone` or
+  `keyball44_right_pmw3360_standalone_experimental` to the right controller.
+
+Pair `KB44 Left` and `KB44 Right` separately. The operating system will see two
+keyboard devices. Each half scans only its own switches, keeps its own Bluetooth
+profiles, layer state and battery state, and continues working if the other is
+powered off.
+
+Layers do not cross between independent devices. Hold the left-side `NAV` key
+for left settings and the right Delete/`NAV` key for right pointer settings.
+Most desktop operating systems combine ordinary modifiers from multiple HID
+keyboards, but that behavior must be verified on the intended host.
+
+To return to normal single-keyboard split behavior, flash `keyball44_left` on
+the left and the corresponding non-standalone right build. Changing between
+standalone and split firmware may require `settings_reset` and re-pairing.
+
 ## First power-up sequence
 
 1. Do the unpowered continuity and isolation checks in
@@ -71,8 +101,9 @@ PMW3360 target and is also available alongside Cirque tap-click.
    the Cirque build, until the M7U routing has been verified.
 3. Flash `settings_reset` to both controllers if they contain old split/BLE
    bonds.
-4. Flash `keyball44_left` to the left half.
-5. Flash exactly one matching right target.
+4. Flash either the split pair or the standalone pair described above; do not
+   mix modes unless the right half is intentionally being used alone.
+5. Pair one split central or both standalone halves, as appropriate.
 6. Verify all 44 switches before testing the pointer.
 7. Verify right/up motion, tap-click (Cirque), and physical trackball axes.
 8. Exercise Original, Expanded, Native, and Scroll independently.

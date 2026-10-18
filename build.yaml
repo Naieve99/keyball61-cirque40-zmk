@@ -22,9 +22,19 @@ include:
     shield: keyball44_left
     artifact-name: keyball44_left
 
+  # Flash this instead of keyball44_left when the left half should pair
+  # directly to the host rather than acting as the right half's peripheral.
+  - board: nice_nano//zmk
+    shield: keyball44_left_standalone
+    artifact-name: keyball44_left_standalone
+
   - board: nice_nano//zmk
     shield: keyball44_right_cirque
     artifact-name: keyball44_right_cirque
+
+  - board: nice_nano//zmk
+    shield: keyball44_right_cirque_standalone
+    artifact-name: keyball44_right_cirque_standalone
 
   - board: nice_nano//zmk
     shield: keyball44_right_cirque
@@ -38,6 +48,10 @@ include:
   - board: nice_nano//zmk
     shield: keyball44_right_pmw3360
     artifact-name: keyball44_right_pmw3360_experimental
+
+  - board: nice_nano//zmk
+    shield: keyball44_right_pmw3360_standalone
+    artifact-name: keyball44_right_pmw3360_standalone_experimental
 
   - board: nice_nano//zmk
     shield: settings_reset

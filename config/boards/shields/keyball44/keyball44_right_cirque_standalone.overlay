@@ -1,0 +1,5 @@
+/*
+ * Keyball44 Rev1 right Cirque half as an independent host-facing keyboard.
+ * SPDX-License-Identifier: MIT
+ */
+#include "keyball44_right_cirque.overlay"
