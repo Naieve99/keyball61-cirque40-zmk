@@ -1,0 +1,36 @@
+if SHIELD_KEYBALL44_RIGHT_CIRQUE || SHIELD_KEYBALL44_RIGHT_PMW3360
+
+config ZMK_KEYBOARD_NAME
+    default "Keyball44"
+
+config ZMK_SPLIT_ROLE_CENTRAL
+    default y
+
+config INPUT
+    default y
+
+config ZMK_POINTING
+    default y
+
+endif
+
+if SHIELD_KEYBALL44_RIGHT_CIRQUE
+
+config I2C
+    default y
+
+endif
+
+if SHIELD_KEYBALL44_RIGHT_PMW3360
+
+config SPI
+    default y
+
+endif
+
+if SHIELD_KEYBALL44_LEFT || SHIELD_KEYBALL44_RIGHT_CIRQUE || SHIELD_KEYBALL44_RIGHT_PMW3360
+
+config ZMK_SPLIT
+    default y
+
+endif

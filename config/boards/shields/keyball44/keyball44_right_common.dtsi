@@ -1,0 +1,22 @@
+/* SPDX-License-Identifier: MIT */
+#include "keyball44.dtsi"
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+&default_transform {
+    col-offset = <6>;
+};
+
+&kscan0 {
+    col-gpios =
+        <&pro_micro 4 GPIO_ACTIVE_HIGH>,
+        <&pro_micro 5 GPIO_ACTIVE_HIGH>,
+        <&pro_micro 6 GPIO_ACTIVE_HIGH>,
+        <&pro_micro 7 GPIO_ACTIVE_HIGH>,
+        <&pro_micro 8 GPIO_ACTIVE_HIGH>,
+        <&pro_micro 9 GPIO_ACTIVE_HIGH>;
+};
+
+/* P0.09 and P0.10 are NFC-capable pins on the nRF52840. */
+&uicr {
+    nfct-pins-as-gpios;
+};

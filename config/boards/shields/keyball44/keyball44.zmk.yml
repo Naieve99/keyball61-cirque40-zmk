@@ -1,0 +1,13 @@
+file_format: "1"
+id: keyball44
+name: Keyball44 Rev1
+type: shield
+url: https://github.com/Yowkees/keyball
+requires: [pro_micro]
+features:
+  - keys
+  - pointer
+siblings:
+  - keyball44_left
+  - keyball44_right_cirque
+  - keyball44_right_pmw3360

@@ -1,6 +1,19 @@
-# Keyball61 Cirque40 — nice!nano v2 / ZMK
+# Keyball61 + Keyball44 Rev1 — nice!nano v2 / ZMK
 
-Firmware for the Rev M2 Keyball61 → Cirque TM040040 adapter.
+Firmware for the Rev M2 Keyball61 → Cirque TM040040 adapter, plus a staged
+Keyball44 Rev1 first article. The original Keyball61 targets are retained.
+
+## Keyball44 status
+
+The Keyball44 work adds the proper 44-key matrix and separate right-central
+builds for either the M7U Cirque adapter or the stock PMW3360. Start with:
+
+- [Keyball44 first-article plan](docs/keyball44-rev1-first-article.md)
+- [M7U shared-connector verification and safe detection](docs/m7u-universal-detection.md)
+
+Universal runtime detection is deliberately gated on hardware identification or
+isolation. The shared P0.10 pin is a Cirque sensor output but a PMW3360 MCU
+output, so a failed-I2C-then-SPI probe sequence is not electrically safe.
 
 ## Repository layout
 
@@ -88,12 +101,19 @@ behaviors, so the scroll toggle and mouse behaviors are pre-defined here.
 
 ## Build outputs
 
-GitHub Actions builds four artifacts:
+GitHub Actions retains the four Keyball61/support artifacts:
 
 - `keyball61_left` — left BLE peripheral
 - `keyball61_right` — right central, no Studio (fallback)
 - `keyball61_right_studio` — preferred right central + Cirque + Studio
 - `settings_reset` — clear stale BLE/split settings if needed
+
+It also builds these Keyball44 artifacts:
+
+- `keyball44_left`
+- `keyball44_right_cirque`
+- `keyball44_right_cirque_studio`
+- `keyball44_right_pmw3360_experimental`
 
 The configuration is pinned to ZMK commit
 `6e2ef41e022d555b10f116e395832913f71717b3` (2026-08-11), a Zephyr 4.1-era

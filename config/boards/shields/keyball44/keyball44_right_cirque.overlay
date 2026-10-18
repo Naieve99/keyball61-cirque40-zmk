@@ -1,0 +1,84 @@
+/*
+ * Keyball44 Rev1 right half with the M7U Cirque adapter.
+ * SPDX-License-Identifier: MIT
+ *
+ * Shared connector mapping:
+ *   P1.13 = Cirque SCL / stock PMW3360 SCLK
+ *   P0.09 = Cirque SDA / stock PMW3360 MISO
+ *   P0.10 = Cirque DR  / stock PMW3360 MOSI
+ *   P1.11 = spare      / stock PMW3360 NCS
+ */
+
+#include "keyball44_right_common.dtsi"
+#include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
+#include <input/processors.dtsi>
+
+&pinctrl {
+    keyball44_cirque_i2c_default: keyball44_cirque_i2c_default {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SCL, 1, 13)>,
+                    <NRF_PSEL(TWIM_SDA, 0, 9)>;
+        };
+    };
+
+    keyball44_cirque_i2c_sleep: keyball44_cirque_i2c_sleep {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SCL, 1, 13)>,
+                    <NRF_PSEL(TWIM_SDA, 0, 9)>;
+            low-power-enable;
+        };
+    };
+};
+
+&i2c0 {
+    compatible = "nordic,nrf-twim";
+    status = "okay";
+    pinctrl-0 = <&keyball44_cirque_i2c_default>;
+    pinctrl-1 = <&keyball44_cirque_i2c_sleep>;
+    pinctrl-names = "default", "sleep";
+
+    cirque44: trackpad@2a {
+        compatible = "cirque,pinnacle";
+        reg = <0x2a>;
+        status = "okay";
+
+        /* Zephyr's current Pinnacle binding uses ACTIVE_LOW here even
+         * though the physical HW_DR line asserts high.
+         */
+        data-ready-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
+
+        data-mode = "relative";
+        primary-tap-enable;
+        sleep-mode-enable;
+
+        /* Keep the proven Keyball61 Rev M2 adapter orientation initially. */
+        invert-x;
+        invert-y;
+    };
+};
+
+/ {
+    cirque44_listener: cirque44_listener {
+        compatible = "zmk,input-listener";
+        device = <&cirque44>;
+        input-processors = <&zip_xy_scaler 1 1>;
+
+        expanded_mode {
+            layers = <4>;
+            input-processors = <&zip_xy_scaler 2 1>;
+        };
+
+        native_mode {
+            layers = <5>;
+            input-processors = <&zip_xy_scaler 1 1>;
+        };
+
+        scroll_mode {
+            layers = <6>;
+            input-processors = <
+                &zip_xy_to_scroll_mapper
+                &zip_scroll_scaler 1 8
+            >;
+        };
+    };
+};

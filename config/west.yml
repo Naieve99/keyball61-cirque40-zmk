@@ -2,6 +2,8 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
+    - name: george-norton
+      url-base: https://github.com/george-norton
   projects:
     - name: zmk
       remote: zmkfirmware
@@ -9,5 +11,8 @@ manifest:
       # Pinned because upstream v0.3 predates the Zephyr Cirque Pinnacle driver.
       revision: 6e2ef41e022d555b10f116e395832913f71717b3
       import: app/west.yml
+    - name: zmk-driver-pmw3360
+      remote: george-norton
+      revision: 0dfa2f0411b795613a35f222f993e45a1e4cc32a
   self:
     path: config

@@ -1,0 +1,91 @@
+/*
+ * Keyball44 Rev1 right half with the stock PMW3360 trackball.
+ * SPDX-License-Identifier: MIT
+ *
+ * This is intentionally a separate first-article build. Do not combine it
+ * with the Cirque overlay until the M7U fail-safe probe requirements in
+ * docs/m7u-universal-detection.md have been met on hardware.
+ */
+
+#include "keyball44_right_common.dtsi"
+#include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
+#include <input/processors.dtsi>
+
+&pinctrl {
+    keyball44_pmw3360_spi_default: keyball44_pmw3360_spi_default {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 10)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 9)>;
+        };
+    };
+
+    keyball44_pmw3360_spi_sleep: keyball44_pmw3360_spi_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 10)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 9)>;
+            low-power-enable;
+        };
+    };
+};
+
+&spi1 {
+    compatible = "nordic,nrf-spim";
+    status = "okay";
+    pinctrl-0 = <&keyball44_pmw3360_spi_default>;
+    pinctrl-1 = <&keyball44_pmw3360_spi_sleep>;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
+
+    pmw3360: trackball@0 {
+        compatible = "pixart,pmw3360";
+        reg = <0>;
+        status = "okay";
+        spi-max-frequency = <2000000>;
+        cpi = <1000>;
+
+        /* The stock Keyball connector does not expose MOTION, so poll at
+         * a conservative 250 Hz for first-article testing.
+         */
+        polling-interval = <4000>;
+    };
+};
+
+/ {
+    pmw3360_listener: pmw3360_listener {
+        compatible = "zmk,input-listener";
+        device = <&pmw3360>;
+
+        /* Official Keyball QMK maps sensor Y to cursor X and sensor X to Y. */
+        input-processors = <
+            &zip_xy_swap_mapper
+            &zip_xy_scaler 1 1
+        >;
+
+        expanded_mode {
+            layers = <4>;
+            input-processors = <
+                &zip_xy_swap_mapper
+                &zip_xy_scaler 2 1
+            >;
+        };
+
+        native_mode {
+            layers = <5>;
+            input-processors = <
+                &zip_xy_swap_mapper
+                &zip_xy_scaler 1 1
+            >;
+        };
+
+        scroll_mode {
+            layers = <6>;
+            input-processors = <
+                &zip_xy_swap_mapper
+                &zip_xy_to_scroll_mapper
+                &zip_scroll_scaler 1 8
+            >;
+        };
+    };
+};
