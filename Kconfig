@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: MIT
+
+menu "Keyball peer features"
+
+config KEYBALL_PEER_LAYER_SYNC
+	bool "Independent-half layer synchronization"
+	depends on ZMK_BLE
+	help
+	  Keep each half as an independent host-facing ZMK keyboard while
+	  broadcasting local layer state to its peer over connectionless BLE.
+
+if KEYBALL_PEER_LAYER_SYNC
+
+config KEYBALL_PEER_FAMILY
+	int "Keyboard family identifier"
+	range 1 255
+	help
+	  Must match on both halves. Keyball44 uses 44 and Keyball61 uses 61.
+
+config KEYBALL_PEER_GROUP_ID
+	hex "Pair group identifier"
+	range 0x0001 0xFFFF
+	help
+	  Must match on both halves and should differ between nearby keyboards.
+
+config KEYBALL_PEER_SIDE
+	int "Side identifier (0 left, 1 right)"
+	range 0 1
+	help
+	  Prevents a half from accepting packets sent by another half configured
+	  for the same side.
+
+config KEYBALL_PEER_TIMEOUT_MS
+	int "Peer layer timeout in milliseconds"
+	range 500 10000
+	default 2500
+	help
+	  Remove remotely contributed layers if peer advertisements stop arriving.
+
+config KEYBALL_PEER_INIT_PRIORITY
+	int "Peer synchronization initialization priority"
+	default 99
+	help
+	  Must run after ZMK initializes Bluetooth and its keymap.
+
+endif
+
+endmenu

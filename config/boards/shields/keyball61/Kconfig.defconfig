@@ -17,6 +17,29 @@ config ZMK_POINTING
 
 endif
 
+if SHIELD_KEYBALL61_LEFT_PEER
+
+config ZMK_KEYBOARD_NAME
+    default "KB61 L Peer"
+
+endif
+
+if SHIELD_KEYBALL61_RIGHT_PEER
+
+config ZMK_KEYBOARD_NAME
+    default "KB61 R Peer"
+
+config I2C
+    default y
+
+config INPUT
+    default y
+
+config ZMK_POINTING
+    default y
+
+endif
+
 if SHIELD_KEYBALL61_LEFT || SHIELD_KEYBALL61_RIGHT
 
 config ZMK_SPLIT

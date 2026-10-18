@@ -20,6 +20,12 @@ Keyball44 also has standalone left and right targets. Those pair to the host as
 right-side access to pointer modes and mouse buttons. See the first-article plan
 for the exact flash combinations and the independent-layer limitation.
 
+Experimental peer targets are also available for both Keyball44 and Keyball61.
+With those builds, each half remains an independent host-facing keyboard while
+layer changes are mirrored over a private connectionless BLE broadcast. See the
+[independent peer firmware guide](docs/independent-peer-firmware.md) for artifact
+pairs, limitations, and the required hardware validation sequence.
+
 ## Repository layout
 
 This repository is intentionally arranged as a normal ZMK user-config repo:
@@ -122,6 +128,14 @@ It also builds these Keyball44 artifacts:
 - `keyball44_right_cirque_standalone`
 - `keyball44_right_pmw3360_experimental`
 - `keyball44_right_pmw3360_standalone_experimental`
+
+Experimental independent + peer-layer artifacts:
+
+- `keyball61_left_independent_peer`
+- `keyball61_right_cirque_independent_peer`
+- `keyball44_left_independent_peer`
+- `keyball44_right_cirque_independent_peer`
+- `keyball44_right_pmw3360_independent_peer_experimental`
 
 The configuration is pinned to ZMK commit
 `6e2ef41e022d555b10f116e395832913f71717b3` (2026-08-11), a Zephyr 4.1-era

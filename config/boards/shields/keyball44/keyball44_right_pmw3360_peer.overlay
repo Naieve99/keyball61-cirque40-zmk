@@ -1,0 +1,2 @@
+/* Independent PMW3360 right half with connectionless peer layer synchronization. */
+#include "keyball44_right_pmw3360_standalone.overlay"
