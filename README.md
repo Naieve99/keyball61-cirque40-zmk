@@ -11,9 +11,11 @@ builds for either the M7U Cirque adapter or the stock PMW3360. Start with:
 - [Keyball44 first-article plan](docs/keyball44-rev1-first-article.md)
 - [M7U shared-connector verification and safe detection](docs/m7u-universal-detection.md)
 
-Universal runtime detection is deliberately gated on hardware identification or
-isolation. The shared P0.10 pin is a Cirque sensor output but a PMW3360 MCU
-output, so a failed-I2C-then-SPI probe sequence is not electrically safe.
+Experimental universal targets now defer both buses and read a three-state
+module identity before selecting I2C, SPI, or keyboard-only operation. They are
+still gated on adding and electrically verifying the documented identity
+straps. The shared P0.10 pin is a Cirque sensor output but a PMW3360 MCU output,
+so a failed-I2C-then-SPI probe sequence is never used.
 
 Keyball44 also has standalone left and right targets. Those pair to the host as
 `KB44 Left` and `KB44 Right`, operate without split transport, and retain
@@ -80,12 +82,18 @@ Normal mode is the default:
 - primary tap = left click (`primary-tap-enable`)
 - Cirque hardware sleep mode enabled
 
-### Toggle full-pad scroll mode
+### Pointer modes
 
-Layer 4 (`SCROLL`) changes the full Cirque surface into horizontal/vertical wheel
-movement using ZMK input processors. The default shortcut is:
+The universal keymaps reserve three synchronized pointer-mode layers:
 
-**Hold NAV + tap S** → toggle SCROLL on/off.
+- layer 4: Expanded (2x cursor scaling)
+- layer 5: Native (1:1 device movement)
+- layer 6: full-pad horizontal/vertical scroll
+
+The NAV layer contains mode selection keys on both sides. The earlier fixed
+Cirque build also uses layer 6 for full-pad scrolling.
+
+Use the NAV-layer `SCROLL` toggle to enter or leave full-pad scroll mode.
 
 Because the SCROLL layer is transparent for keys, the same shortcut can be used
 to exit it.
@@ -137,6 +145,18 @@ Experimental independent + peer-layer artifacts:
 - `keyball44_right_cirque_independent_peer`
 - `keyball44_right_pmw3360_independent_peer_experimental`
 
+Experimental universal independent artifacts:
+
+- `keyball61_left_universal_peer_experimental`
+- `keyball61_right_universal_peer_experimental`
+- `keyball44_left_universal_peer_experimental`
+- `keyball44_right_universal_peer_experimental`
+
+These four builds detect no module, Cirque I2C, or PMW3360 SPI independently on
+each half at power-on. Side-specific files are still required for the physical
+key matrix and explicit left/right enrollment identity; changing the removable
+pointer module does not require reflashing.
+
 The configuration is pinned to ZMK commit
 `6e2ef41e022d555b10f116e395832913f71717b3` (2026-08-11), a Zephyr 4.1-era
 main snapshot that includes the upstream Cirque Pinnacle driver.
@@ -162,7 +182,7 @@ as a separate validation item.
 8. Validate all 61 key positions.
 9. Validate pointer direction: physical right/up must produce right/up.
 10. Validate primary tap.
-11. Hold NAV + tap S and validate full-pad scrolling; repeat to exit.
+11. Use the NAV-layer SCROLL toggle and validate full-pad scrolling; repeat to exit.
 12. Tune pointer/scroll scaling only after the above passes.
 
 ## RGB

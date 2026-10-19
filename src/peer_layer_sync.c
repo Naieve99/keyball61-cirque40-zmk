@@ -316,8 +316,17 @@ static int peer_bond_settings_set(const char *name, size_t len,
     return 0;
 }
 
+static int peer_bond_settings_commit(void) {
+    if (bond_valid) {
+        k_work_submit(&advertise_work);
+        LOG_INF("Loaded saved peer enrollment");
+    }
+
+    return 0;
+}
+
 SETTINGS_STATIC_HANDLER_DEFINE(keyball_peer, "keyball_peer", NULL,
-                               peer_bond_settings_set, NULL, NULL);
+                               peer_bond_settings_set, peer_bond_settings_commit, NULL);
 
 static int save_bond(void) {
     struct peer_bond_record record = {
