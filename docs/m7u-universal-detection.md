@@ -92,10 +92,12 @@ pointer modules therefore need no global mode and do not change peer enrollment.
 The four universal artifacts are intentionally named `experimental` until this
 contract is proven with a meter and physical first articles.
 
-Removing the Cirque module's R1 selects its I2C configuration; that is separate
-from the new P1.11 identity-low strap. A future Gen6 I2C module can share the
-I2C-class branch, but its exact connector wiring, I2C address, and positive
-register identity must be added before firmware can distinguish it from Cirque.
+Removing the current Cirque module's R1 selects its I2C configuration; that is
+separate from the new P1.11 identity-low strap. Cirque lists its Gen6s circle
+pads, including TM040040, as I2C-only. A Gen6s module can therefore share the
+I2C-class electrical branch, but its exact connector wiring, I2C address, and
+positive register identity must be added before firmware enables the correct
+driver. See [Cirque's module interface table](https://www.cirque.com/glidepointspecification).
 
 ## Powered bring-up
 
