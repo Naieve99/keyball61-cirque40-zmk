@@ -97,7 +97,10 @@
     keyball44_pointer_detector: pointer_detector {
         compatible = "keyball,pointer-autodetect";
         status = "okay";
-        id-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+        scl-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+        sda-gpios = <&gpio0 9 GPIO_ACTIVE_HIGH>;
+        mosi-dr-gpios = <&gpio0 10 GPIO_ACTIVE_HIGH>;
+        cs-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
         cirque = <&cirque44_universal>;
         pmw3360 = <&pmw3360_44_universal>;
     };

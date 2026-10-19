@@ -68,12 +68,13 @@ endmenu
 menu "Keyball universal pointer"
 
 config KEYBALL_UNIVERSAL_POINTER
-	bool "Safe startup selection for Cirque I2C or PMW3360 SPI"
+	bool "Startup probing for Cirque I2C or PMW3360 SPI"
 	depends on GPIO && I2C && SPI && INPUT
 	help
-	  Detect a module-side identity strap before initializing either shared
-	  bus. A Cirque-class adapter must hold the ID/NCS pin low, a PMW3360
-	  module must hold it high, and an empty connector must leave it floating.
+	  Keep the shared pins in an input-safe state, hold PMW3360 NCS inactive,
+	  and bit-bang a read-only Cirque FirmwareId probe at I2C address 0x2A.
+	  If Cirque is absent, initialize SPI and verify the PMW3360 Product_ID.
+	  No module-side identity straps are required.
 
 config KEYBALL_POINTER_DETECT_INIT_PRIORITY
 	int "Universal pointer detection initialization priority"

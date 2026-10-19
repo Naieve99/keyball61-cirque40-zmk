@@ -1,14 +1,29 @@
-description: Safe Keyball shared-connector pointer detector
+description: Keyball shared-connector pointer protocol detector
 
 compatible: "keyball,pointer-autodetect"
 
 include: base.yaml
 
 properties:
-  id-gpios:
+  scl-gpios:
     type: phandle-array
     required: true
-    description: Module-side three-state identity strap and PMW3360 NCS pin
+    description: Shared Cirque SCL and PMW3360 SCLK pin
+
+  sda-gpios:
+    type: phandle-array
+    required: true
+    description: Shared Cirque SDA and PMW3360 MISO pin
+
+  mosi-dr-gpios:
+    type: phandle-array
+    required: true
+    description: Shared Cirque HW_DR and PMW3360 MOSI pin
+
+  cs-gpios:
+    type: phandle-array
+    required: true
+    description: PMW3360 active-low chip-select pin; unused by the Cirque adapter
 
   cirque:
     type: phandle

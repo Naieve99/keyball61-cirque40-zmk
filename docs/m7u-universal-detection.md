@@ -1,18 +1,22 @@
 # M7U shared-connector verification and safe detection
 
-## Do not enable blind protocol fallback
+## Strapless ordered protocol detection
 
-The four signal pins can represent either Cirque I2C or stock PMW3360 SPI, but
-they do not all have compatible directions. In particular, P0.10 is an MCU
-input for Cirque data-ready and an MCU output for PMW3360 MOSI. If a connected
-Cirque fails to acknowledge I2C, blindly changing P0.10 to a push-pull SPI
-output can contend with the Cirque's HW_DR output.
+The universal targets require no identity resistors. Both buses remain deferred
+while firmware performs an ordered startup probe on raw GPIOs:
 
-For that reason blind fallback remains forbidden. The branch now contains
-experimental universal targets with deferred I2C/SPI initialization, but they
-must not be flashed until the adapter supplies and electrically verifies the
-three-state identity described below. The fixed-pointer builds remain the safe
-bring-up fallback.
+1. Hold P1.11 / PMW3360 NCS high so the SPI sensor is inactive.
+2. Keep P0.10 / PMW3360 MOSI / Cirque HW_DR as an input.
+3. Use open-drain-style GPIO transitions to read the Cirque FirmwareId at I2C
+   address `0x2A`. Accept Cirque only when FirmwareId is `0x07`.
+4. Only when that probe fails, initialize SPI and accept PMW3360 only when its
+   Product_ID register is `0x42`.
+5. If neither positive identity is returned, run keyboard-only.
+
+This detects a healthy module without an adapter strap, but it is not fail-safe
+against a broken or miswired Cirque. A failed Cirque probe is indistinguishable
+from no Cirque, and the PMW3360 probe must then drive P0.10 as MOSI. The fixed
+pointer builds remain the safer diagnostic option for questionable hardware.
 
 ## Shared signal map
 
@@ -21,7 +25,7 @@ bring-up fallback.
 | P1.13 | SCL, open-drain clock | SCLK, push-pull output | High impedance |
 | P0.09 | SDA, bidirectional open-drain | MISO, input | High impedance |
 | P0.10 | HW_DR, sensor output / MCU input | MOSI, MCU output | High impedance; never drive before identity is certain |
-| P1.11 | Spare | NCS, active-low MCU output | High impedance; for PMW, assert inactive high before enabling SPI |
+| P1.11 | Spare | NCS, active-low MCU output | Drive high before probing either protocol |
 | GND | Ground | Ground | Must be common |
 | 3.3 V | Sensor supply | Sensor supply | Never apply 5 V |
 
@@ -44,7 +48,8 @@ Record these results for the exact keyboard PCB revision and adapter revision:
 4. Verify 3.3 V has no continuity to ground or any signal.
 5. Verify P0.10 reaches only Cirque HW_DR in Cirque configuration and only
    PMW3360 MOSI in PMW configuration.
-6. Verify P1.11 reaches only the intended spare/identity circuit or PMW NCS.
+6. Verify P1.11 is unused on the Cirque adapter and reaches PMW NCS in the
+   trackball configuration.
 7. Confirm I2C pull-up values and that there is only one appropriate effective
    set on SCL/SDA.
 8. Confirm the Cirque is configured for 3.3 V I2C at address 0x2A. For the
@@ -55,49 +60,25 @@ Record these results for the exact keyboard PCB revision and adapter revision:
 
 ## Hardware contract for the experimental universal image
 
-The implemented detector reads P1.11 twice while all shared protocol pins are
-inputs: once with the nRF internal pull-up and once with its internal pull-down.
-The removable module or adapter, not the keyboard base PCB, must provide this
-identity:
+Do not install P1.11 identity straps. P1.11 must remain the normal PMW3360 NCS
+connection and must be electrically unused by the Cirque adapter. The startup
+shim runs before normal Zephyr I2C/SPI device initialization, holds NCS high,
+and performs the positive device checks above.
 
-| Pull-up reading | Pull-down reading | Result |
-| --- | --- | --- |
-| low | low | I2C class; initialize only Cirque today |
-| high | high | SPI class; initialize only PMW3360 |
-| high | low | floating/empty; keyboard-only mode |
-| low | high | invalid; keep shared pins inert |
-
-The external low/high straps must be strong enough to override both internal
-pull directions while respecting sensor limits. A 2.2-4.7 kOhm starting range
-is reasonable for bench evaluation, but the final value, current, leakage, VIH,
-VIL, and PMW3360 NCS startup behavior must be measured before production. The
-PMW high strap also keeps NCS inactive. A dedicated ID contact or isolation
-device remains more robust.
-
-Firmware also needs an early initialization shim so normal Zephyr I2C and SPI
-device initialization cannot race ahead and configure both protocols. The safe
-state machine is:
-
-1. Start with P1.13, P0.09, P0.10 and P1.11 as high-impedance inputs.
-2. Read the hardware-defined low/high/floating identity. Do not infer protocol
-   from a failed bus transaction.
-3. If identity is Cirque, keep P0.10 as an input and initialize only I2C.
-4. If identity is PMW3360, establish NCS inactive high first, then configure
-   SCLK/MOSI/MISO and initialize only SPI.
-5. For a floating identity, remain in keyboard-only mode. For a conflicting or
-   invalid identity, leave every signal safe and expose an error.
+Detection is deliberately based on the device's identity register, not merely
+an address ACK. That avoids mistaking an unrelated device at `0x2A` for a
+Pinnacle. It also avoids treating arbitrary SPI data as a PMW3360.
 
 Detection runs independently on each half at every boot. Zero, one, or two
 pointer modules therefore need no global mode and do not change peer enrollment.
-The four universal artifacts are intentionally named `experimental` until this
-contract is proven with a meter and physical first articles.
+The four universal artifacts remain named `experimental` until both positive
+probe paths and the empty-connector path are tested on physical first articles.
 
-Removing the current Cirque module's R1 selects its I2C configuration; that is
-separate from the new P1.11 identity-low strap. Cirque lists its Gen6s circle
-pads, including TM040040, as I2C-only. A Gen6s module can therefore share the
-I2C-class electrical branch, but its exact connector wiring, I2C address, and
-positive register identity must be added before firmware enables the correct
-driver. See [Cirque's module interface table](https://www.cirque.com/glidepointspecification).
+Removing the current Cirque module's R1 selects its I2C configuration. Cirque
+lists its Gen6s circle pads, including TM040040, as I2C-only. A Gen6s module can
+therefore share the I2C electrical branch, but its exact connector wiring, I2C
+address, and positive register identity must be added before firmware enables
+the correct driver. See [Cirque's module interface table](https://www.cirque.com/glidepointspecification).
 
 ## Powered bring-up
 

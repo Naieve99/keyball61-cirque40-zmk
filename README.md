@@ -11,11 +11,17 @@ builds for either the M7U Cirque adapter or the stock PMW3360. Start with:
 - [Keyball44 first-article plan](docs/keyball44-rev1-first-article.md)
 - [M7U shared-connector verification and safe detection](docs/m7u-universal-detection.md)
 
-Experimental universal targets now defer both buses and read a three-state
-module identity before selecting I2C, SPI, or keyboard-only operation. They are
-still gated on adding and electrically verifying the documented identity
-straps. The shared P0.10 pin is a Cirque sensor output but a PMW3360 MCU output,
-so a failed-I2C-then-SPI probe sequence is never used.
+Experimental universal targets now defer both buses and identify the installed
+module by protocol: a read-only Cirque FirmwareId probe at I2C address `0x2A`,
+followed only when absent by a PMW3360 SPI Product_ID probe. No identity straps
+are required. P1.11 is held high during the I2C probe so a PMW3360 remains
+deselected, and P0.10 remains an input until SPI probing begins.
+
+This is convenient rather than electrically fail-safe: if a connected Cirque is
+broken or miswired and does not acknowledge, the subsequent SPI probe will drive
+P0.10 even though that net is the Cirque's HW_DR output. Use only with verified,
+healthy modules, power off before swapping, and retain the fixed-pointer builds
+for fault isolation.
 
 Keyball44 also has standalone left and right targets. Those pair to the host as
 `KB44 Left` and `KB44 Right`, operate without split transport, and retain
@@ -155,7 +161,7 @@ Experimental universal independent artifacts:
 These four builds detect no module, Cirque I2C, or PMW3360 SPI independently on
 each half at power-on. Side-specific files are still required for the physical
 key matrix and explicit left/right enrollment identity; changing the removable
-pointer module does not require reflashing.
+pointer module does not require reflashing or an identity strap.
 
 The configuration is pinned to ZMK commit
 `6e2ef41e022d555b10f116e395832913f71717b3` (2026-08-11), a Zephyr 4.1-era
