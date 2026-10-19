@@ -1,0 +1,21 @@
+description: Safe Keyball shared-connector pointer detector
+
+compatible: "keyball,pointer-autodetect"
+
+include: base.yaml
+
+properties:
+  id-gpios:
+    type: phandle-array
+    required: true
+    description: Module-side three-state identity strap and PMW3360 NCS pin
+
+  cirque:
+    type: phandle
+    required: true
+    description: Deferred Cirque Pinnacle device
+
+  pmw3360:
+    type: phandle
+    required: true
+    description: Deferred PMW3360 device

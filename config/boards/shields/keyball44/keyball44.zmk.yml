@@ -11,9 +11,11 @@ siblings:
   - keyball44_left
   - keyball44_left_standalone
   - keyball44_left_peer
+  - keyball44_left_universal_peer
   - keyball44_right_cirque
   - keyball44_right_cirque_standalone
   - keyball44_right_cirque_peer
   - keyball44_right_pmw3360
   - keyball44_right_pmw3360_standalone
   - keyball44_right_pmw3360_peer
+  - keyball44_right_universal_peer

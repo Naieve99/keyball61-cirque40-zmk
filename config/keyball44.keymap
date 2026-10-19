@@ -20,6 +20,29 @@
 #include <dt-bindings/zmk/mouse.h>
 
 / {
+#if defined(CONFIG_KEYBALL_PEER_LAYER_SYNC)
+    peer_enroll: peer_enroll {
+        compatible = "keyball,behavior-peer-enroll";
+        #binding-cells = <0>;
+    };
+
+    combos {
+        compatible = "zmk,combos";
+
+        enroll_left {
+            timeout-ms = <50>;
+            key-positions = <0 5 12 17>;
+            bindings = <&peer_enroll>;
+        };
+
+        enroll_right {
+            timeout-ms = <50>;
+            key-positions = <6 11 18 23>;
+            bindings = <&peer_enroll>;
+        };
+    };
+#endif
+
     keymap {
         compatible = "zmk,keymap";
 

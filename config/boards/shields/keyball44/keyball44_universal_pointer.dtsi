@@ -1,0 +1,147 @@
+/*
+ * Runtime-selected Cirque I2C / PMW3360 SPI pointer for either Keyball44 half.
+ * KEYBALL_POINTER_IS_LEFT must be defined by the including side overlay.
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
+#include <dt-bindings/zmk/input_transform.h>
+#include <input/processors.dtsi>
+
+&uicr {
+    nfct-pins-as-gpios;
+};
+
+&pinctrl {
+    keyball44_universal_i2c_default: keyball44_universal_i2c_default {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SCL, 1, 13)>,
+                    <NRF_PSEL(TWIM_SDA, 0, 9)>;
+        };
+    };
+
+    keyball44_universal_i2c_sleep: keyball44_universal_i2c_sleep {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SCL, 1, 13)>,
+                    <NRF_PSEL(TWIM_SDA, 0, 9)>;
+            low-power-enable;
+        };
+    };
+
+    keyball44_universal_spi_default: keyball44_universal_spi_default {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 10)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 9)>;
+        };
+    };
+
+    keyball44_universal_spi_sleep: keyball44_universal_spi_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 1, 13)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 10)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 9)>;
+            low-power-enable;
+        };
+    };
+};
+
+&i2c0 {
+    compatible = "nordic,nrf-twim";
+    status = "okay";
+    zephyr,deferred-init;
+    pinctrl-0 = <&keyball44_universal_i2c_default>;
+    pinctrl-1 = <&keyball44_universal_i2c_sleep>;
+    pinctrl-names = "default", "sleep";
+
+    cirque44_universal: trackpad@2a {
+        compatible = "cirque,pinnacle";
+        reg = <0x2a>;
+        status = "okay";
+        zephyr,deferred-init;
+        data-ready-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
+        data-mode = "relative";
+        primary-tap-enable;
+        sleep-mode-enable;
+        invert-x;
+        invert-y;
+    };
+};
+
+&spi1 {
+    compatible = "nordic,nrf-spim";
+    status = "okay";
+    zephyr,deferred-init;
+    pinctrl-0 = <&keyball44_universal_spi_default>;
+    pinctrl-1 = <&keyball44_universal_spi_sleep>;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
+
+    pmw3360_44_universal: trackball@0 {
+        compatible = "pixart,pmw3360";
+        reg = <0>;
+        status = "okay";
+        zephyr,deferred-init;
+        spi-max-frequency = <2000000>;
+        cpi = <1000>;
+        polling-interval = <4000>;
+#if KEYBALL_POINTER_IS_LEFT
+        invert-x;
+        invert-y;
+#endif
+    };
+};
+
+/ {
+    keyball44_pointer_detector: pointer_detector {
+        compatible = "keyball,pointer-autodetect";
+        status = "okay";
+        id-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+        cirque = <&cirque44_universal>;
+        pmw3360 = <&pmw3360_44_universal>;
+    };
+
+    cirque44_universal_listener: cirque44_universal_listener {
+        compatible = "zmk,input-listener";
+        device = <&cirque44_universal>;
+        input-processors = <&zip_xy_scaler 1 1>;
+
+        expanded_mode {
+            layers = <4>;
+            input-processors = <&zip_xy_scaler 2 1>;
+        };
+
+        native_mode {
+            layers = <5>;
+            input-processors = <&zip_xy_scaler 1 1>;
+        };
+
+        scroll_mode {
+            layers = <6>;
+            input-processors = <&zip_xy_to_scroll_mapper &zip_scroll_scaler 1 8>;
+        };
+    };
+
+    pmw3360_44_universal_listener: pmw3360_44_universal_listener {
+        compatible = "zmk,input-listener";
+        device = <&pmw3360_44_universal>;
+        input-processors = <&zip_xy_swap_mapper &zip_xy_scaler 1 1>;
+
+        expanded_mode {
+            layers = <4>;
+            input-processors = <&zip_xy_swap_mapper &zip_xy_scaler 2 1>;
+        };
+
+        native_mode {
+            layers = <5>;
+            input-processors = <&zip_xy_swap_mapper &zip_xy_scaler 1 1>;
+        };
+
+        scroll_mode {
+            layers = <6>;
+            input-processors = <&zip_xy_swap_mapper &zip_xy_to_scroll_mapper
+                                &zip_scroll_scaler 1 8>;
+        };
+    };
+};

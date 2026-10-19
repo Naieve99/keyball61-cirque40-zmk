@@ -10,5 +10,7 @@ features:
 siblings:
   - keyball61_left
   - keyball61_left_peer
+  - keyball61_left_universal_peer
   - keyball61_right
   - keyball61_right_peer
+  - keyball61_right_universal_peer

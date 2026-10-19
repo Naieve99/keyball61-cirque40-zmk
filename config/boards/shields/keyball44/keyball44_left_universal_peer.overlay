@@ -1,0 +1,4 @@
+/* Independent left half with startup-selected pointer hardware. */
+#include "keyball44_left_standalone.overlay"
+#define KEYBALL_POINTER_IS_LEFT 1
+#include "keyball44_universal_pointer.dtsi"

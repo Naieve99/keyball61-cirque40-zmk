@@ -7,6 +7,9 @@ config SHIELD_KEYBALL44_LEFT_STANDALONE
 config SHIELD_KEYBALL44_LEFT_PEER
     def_bool $(shields_list_contains,keyball44_left_peer)
 
+config SHIELD_KEYBALL44_LEFT_UNIVERSAL_PEER
+    def_bool $(shields_list_contains,keyball44_left_universal_peer)
+
 config SHIELD_KEYBALL44_RIGHT_CIRQUE
     def_bool $(shields_list_contains,keyball44_right_cirque)
 
@@ -24,3 +27,6 @@ config SHIELD_KEYBALL44_RIGHT_PMW3360_STANDALONE
 
 config SHIELD_KEYBALL44_RIGHT_PMW3360_PEER
     def_bool $(shields_list_contains,keyball44_right_pmw3360_peer)
+
+config SHIELD_KEYBALL44_RIGHT_UNIVERSAL_PEER
+    def_bool $(shields_list_contains,keyball44_right_universal_peer)

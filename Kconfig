@@ -17,12 +17,6 @@ config KEYBALL_PEER_FAMILY
 	help
 	  Must match on both halves. Keyball44 uses 44 and Keyball61 uses 61.
 
-config KEYBALL_PEER_GROUP_ID
-	hex "Pair group identifier"
-	range 0x0001 0xFFFF
-	help
-	  Must match on both halves and should differ between nearby keyboards.
-
 config KEYBALL_PEER_SIDE
 	int "Side identifier (0 left, 1 right)"
 	range 0 1
@@ -37,6 +31,30 @@ config KEYBALL_PEER_TIMEOUT_MS
 	help
 	  Remove remotely contributed layers if peer advertisements stop arriving.
 
+config KEYBALL_PEER_ENROLL_HOLD_MS
+	int "Peer enrollment chord hold time in milliseconds"
+	range 1000 10000
+	default 3000
+	help
+	  Hold the local enrollment chord this long to erase only the saved peer
+	  relationship and open a new enrollment window.
+
+config KEYBALL_PEER_ENROLL_TIMEOUT_MS
+	int "Peer enrollment window in milliseconds"
+	range 10000 300000
+	default 60000
+	help
+	  Stop accepting enrollment packets if no opposite-side peer completes
+	  the handshake within this interval.
+
+config KEYBALL_PEER_ENROLL_MIN_RSSI
+	int "Minimum enrollment signal strength (dBm)"
+	range -100 -20
+	default -55
+	help
+	  Ignore enrollment requests weaker than this value. Put the intended
+	  halves close together while enrolling them.
+
 config KEYBALL_PEER_INIT_PRIORITY
 	int "Peer synchronization initialization priority"
 	default 99
@@ -44,5 +62,24 @@ config KEYBALL_PEER_INIT_PRIORITY
 	  Must run after ZMK initializes Bluetooth and its keymap.
 
 endif
+
+endmenu
+
+menu "Keyball universal pointer"
+
+config KEYBALL_UNIVERSAL_POINTER
+	bool "Safe startup selection for Cirque I2C or PMW3360 SPI"
+	depends on GPIO && I2C && SPI && INPUT
+	help
+	  Detect a module-side identity strap before initializing either shared
+	  bus. A Cirque-class adapter must hold the ID/NCS pin low, a PMW3360
+	  module must hold it high, and an empty connector must leave it floating.
+
+config KEYBALL_POINTER_DETECT_INIT_PRIORITY
+	int "Universal pointer detection initialization priority"
+	depends on KEYBALL_UNIVERSAL_POINTER
+	default 80
+	help
+	  APPLICATION-level priority used to select and initialize one pointer.
 
 endmenu

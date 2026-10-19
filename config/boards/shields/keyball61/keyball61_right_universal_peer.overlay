@@ -1,0 +1,4 @@
+/* Independent right half with startup-selected pointer hardware. */
+#include "keyball61_right_common.dtsi"
+#define KEYBALL_POINTER_IS_LEFT 0
+#include "keyball61_universal_pointer.dtsi"

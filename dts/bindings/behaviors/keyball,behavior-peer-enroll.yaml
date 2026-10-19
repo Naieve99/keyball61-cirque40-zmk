@@ -1,0 +1,5 @@
+description: Keyball peer enrollment long-hold behavior
+
+compatible: "keyball,behavior-peer-enroll"
+
+include: zero_param.yaml

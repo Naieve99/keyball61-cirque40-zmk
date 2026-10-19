@@ -26,6 +26,16 @@ include:
     shield: keyball61_right_peer
     artifact-name: keyball61_right_cirque_independent_peer
 
+  # Preferred experimental peer builds. Each half independently selects a
+  # Cirque I2C module, PMW3360 SPI module, or keyboard-only mode at startup.
+  - board: nice_nano//zmk
+    shield: keyball61_left_universal_peer
+    artifact-name: keyball61_left_universal_peer_experimental
+
+  - board: nice_nano//zmk
+    shield: keyball61_right_universal_peer
+    artifact-name: keyball61_right_universal_peer_experimental
+
   # Keyball44 Rev1 uses separate right-half builds until the M7U adapter has a
   # hardware-safe way to distinguish I2C Cirque from SPI PMW3360.
   - board: nice_nano//zmk
@@ -75,6 +85,14 @@ include:
   - board: nice_nano//zmk
     shield: keyball44_right_pmw3360_peer
     artifact-name: keyball44_right_pmw3360_independent_peer_experimental
+
+  - board: nice_nano//zmk
+    shield: keyball44_left_universal_peer
+    artifact-name: keyball44_left_universal_peer_experimental
+
+  - board: nice_nano//zmk
+    shield: keyball44_right_universal_peer
+    artifact-name: keyball44_right_universal_peer_experimental
 
   - board: nice_nano//zmk
     shield: settings_reset

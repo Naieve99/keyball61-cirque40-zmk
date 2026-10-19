@@ -4,8 +4,14 @@ config SHIELD_KEYBALL61_LEFT
 config SHIELD_KEYBALL61_LEFT_PEER
     def_bool $(shields_list_contains,keyball61_left_peer)
 
+config SHIELD_KEYBALL61_LEFT_UNIVERSAL_PEER
+    def_bool $(shields_list_contains,keyball61_left_universal_peer)
+
 config SHIELD_KEYBALL61_RIGHT
     def_bool $(shields_list_contains,keyball61_right)
 
 config SHIELD_KEYBALL61_RIGHT_PEER
     def_bool $(shields_list_contains,keyball61_right_peer)
+
+config SHIELD_KEYBALL61_RIGHT_UNIVERSAL_PEER
+    def_bool $(shields_list_contains,keyball61_right_universal_peer)
